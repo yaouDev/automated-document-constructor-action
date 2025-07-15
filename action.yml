@@ -1,0 +1,30 @@
+name: 'Automated Document Constructor'
+description: 'Construct PDF documents from Markdown files in the assigned directories'
+
+inputs:
+  file_base_name:
+    description: 'What your document should be called'
+    required: false
+    default: 'my-document'
+  docs_dir:
+    description: 'Where your text files are placed'
+    required: true
+    default: 'my-documents'
+  images_dir:
+    description: 'Where your images are placed'
+    required: true
+    default: 'my-images'
+  template_path:
+    description: 'Point to your template, "remote_template" will download the default'
+    required: false
+    default: 'remote_template'
+
+outputs:
+  pdf_path:
+    description: 'The path to the generated PDF file.'
+  artifact_name:
+    description: 'The name of the artifact uploaded by the action.'
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

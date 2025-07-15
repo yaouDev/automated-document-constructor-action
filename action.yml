@@ -52,4 +52,3 @@ runs:
         docs_dir: ${{ inputs.docs_dir }}
         images_dir: ${{ inputs.images_dir }}
         template_path: ${{ inputs.template_path }}
-      secrets: inherit

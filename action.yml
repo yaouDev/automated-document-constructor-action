@@ -6,6 +6,10 @@ inputs:
     description: 'What your document should be called'
     required: false
     default: 'my-document'
+  output_dir:
+    description: 'Where your documents should end up (if you choose to upload)'
+    required: false
+    default: 'my-artifacts'
   docs_dir:
     description: 'Where your text files are placed'
     required: true

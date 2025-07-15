@@ -1,0 +1,72 @@
+name: Build PDF
+
+on:
+  workflow_dispatch:
+    inputs:
+      file_base_name:
+        required: false
+        type: string
+        description: 'What your document should be called'
+        default: 'my-document'
+      output_bool:
+        required: true
+        type: boolean
+        description: 'Upload PDF to your repo?'
+        default: true
+      output_dir:
+        required: false
+        type: string
+        description: 'Where your documents should end up (if you choose to upload)'
+        default: 'my-artifacts'
+      docs_dir:
+        required: true
+        type: string
+        description: 'Where your text files are placed'
+        default: 'my-documents'
+      images_dir:
+        required: true
+        type: string
+        description: 'Where your images are placed'
+        default: 'my-images'
+      template_path:
+        required: false
+        type: string
+        description: 'Point to your template, "remote_template" will download the default'
+        default: 'remote_template'
+
+jobs:
+  call_pdf_builder:
+    uses: yaouDev/automated-document-constructor/.github/workflows/build_pdf.yml@main
+    permissions:
+      contents: write
+
+    with:
+      file_base_name: ${{ inputs.file_base_name }}
+      output_bool: ${{ inputs.output_bool }}
+      output_dir: ${{ inputs.output_dir }}
+      docs_dir: ${{ inputs.docs_dir }}
+      images_dir: ${{ inputs.images_dir }}
+      template_path: ${{ inputs.template_path }}
+
+  post_build_actions:
+    needs: call_pdf_builder
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Display Generated PDF Information
+        run: |
+          echo "The PDF was generated and is available at: ${{ needs.call_pdf_builder.outputs.pdf_path }}"
+          echo "You can view the reusable workflow's artifacts here: ${{ needs.call_pdf_builder.outputs.artifact_url }}"
+
+      - name: Download Generated PDF Artifact
+        id: download_pdf
+        if: success() && needs.call_pdf_builder.outputs.pdf_path != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.call_pdf_builder.outputs.artifact_name }}
+          path: ./downloaded_pdf
+
+      - name: Verify Downloaded PDF (Optional)
+        if: success() && steps.download_pdf.outputs.download-path != ''
+        run: |
+          echo "Downloaded PDF to: $(ls -R ./downloaded_pdf)"

@@ -44,7 +44,7 @@ runs:
   steps:
     - name: Call the internal Reusable Workflow
       id: call_reusable_workflow
-      uses: /yaouDev/automated-document-constructor/.github/workflows/build_pdf.yml@main
+      uses: ./.github/workflows/call-origin.yml
       with:
         file_base_name: ${{ inputs.file_base_name }}
         output_dir: ${{ inputs.output_dir }}

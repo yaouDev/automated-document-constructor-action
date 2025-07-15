@@ -1,23 +1,27 @@
 name: 'Automated Document Constructor'
-description: 'Construct PDF documents from Markdown files in the assigned directories'
+description: 'Construct PDF documents from Markdown files using a robust, reusable workflow.'
 
 inputs:
   file_base_name:
     description: 'What your document should be called'
     required: false
     default: 'my-document'
+  output_bool:
+    description: 'Upload PDF to repo?'
+    required: true
+    default: true
   output_dir:
     description: 'Where your documents should end up (if you choose to upload)'
     required: false
-    default: 'my-artifacts'
+    default: 'artifacts'
   docs_dir:
     description: 'Where your text files are placed'
     required: true
-    default: 'my-documents'
+    default: 'docs'
   images_dir:
     description: 'Where your images are placed'
     required: true
-    default: 'my-images'
+    default: 'images'
   template_path:
     description: 'Point to your template, "remote_template" will download the default'
     required: false
@@ -25,10 +29,26 @@ inputs:
 
 outputs:
   pdf_path:
-    description: 'The path to the generated PDF file.'
+    description: 'The full path to the generated PDF document'
+    value: ${{ steps.call_reusable_workflow.outputs.pdf_path }}
+  artifact_url:
+    description: 'URL to the workflow run artifacts'
+    value: ${{ steps.call_reusable_workflow.outputs.artifact_url }}
   artifact_name:
-    description: 'The name of the artifact uploaded by the action.'
+    description: 'The exact name of the uploaded PDF artifact'
+    value: ${{ steps.call_reusable_workflow.outputs.artifact_name }}
 
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
+  using: 'composite'
+  steps:
+    - name: Call the internal Reusable Workflow
+      id: call_reusable_workflow
+      uses: /yaouDev/automated-document-constructor/.github/workflows/build_pdf.yml@main
+      with:
+        file_base_name: ${{ inputs.file_base_name }}
+        output_dir: ${{ inputs.output_dir }}
+        output_bool: ${{ inputs.output_bool }}
+        docs_dir: ${{ inputs.docs_dir }}
+        images_dir: ${{ inputs.images_dir }}
+        template_path: ${{ inputs.template_path }}
+      secrets: inherit

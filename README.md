@@ -1,3 +1,5 @@
-# automated-document-constructor-action
+# Automated Document Constructor (Action)
 
-UNDER CONSTRUCTION
+An action that initiates the [Automated Document Constructor](https://github.com/yaouDev/automated-document-constructor)
+
+**UNDER CONSTRUCTION**
